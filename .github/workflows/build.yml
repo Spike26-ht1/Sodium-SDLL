@@ -11,6 +11,19 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Instalar dependências
         run: |
@@ -21,7 +34,8 @@ jobs:
             unzip \
             build-essential \
             cmake \
-            ninja-build
+            ninja-build \
+            python3
 
       - name: Instalar XMake
         run: |
@@ -29,28 +43,40 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Instalar Android NDK r28c
-        uses: android-actions/setup-android@v3
-
-      - name: Configurar NDK
         run: |
-          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          yes | "$SDKMANAGER" --licenses || true
-          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0" "ndk;28.2.13676358"
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "ndk;28.2.13676358"
+
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/28.2.13676358" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_ROOT=$ANDROID_SDK_ROOT/ndk/28.2.13676358" >> "$GITHUB_ENV"
+
+      - name: Verificar toolchain
+        run: |
+          java -version
+          sdkmanager --version
+          xmake --version
+          test -f "$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake"
+          test -x "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
 
       - name: Configurar XMake
         run: |
-          export ANDROID_HOME="$ANDROID_SDK_ROOT"
-          export ANDROID_NDK_HOME="$ANDROID_SDK_ROOT/ndk/28.2.13676358"
+          xmake f -c
           xmake f \
             -p android \
             -a arm64-v8a \
+            -m release \
             --ndk="$ANDROID_NDK_HOME" \
             --android_sdk="$ANDROID_HOME" \
             -y
 
       - name: Compilar
         run: |
-          xmake -v
+          xmake -v -y
 
       - name: Mostrar arquivos gerados
         run: |
@@ -58,9 +84,10 @@ jobs:
 
       - name: Enviar artefatos
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: Sodium-SDLL-android-arm64
+          if-no-files-found: warn
           path: |
             build/**/*.so
             build/**/*.levipack
-           
