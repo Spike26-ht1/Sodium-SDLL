@@ -1,0 +1,68 @@
+name: Build Sodium-SDLL
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git \
+            curl \
+            unzip \
+            build-essential \
+            cmake \
+            ninja-build
+
+      - name: Instalar XMake
+        run: |
+          curl -fsSL https://xmake.io/shget.text | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Instalar Android NDK r28c
+        uses: android-actions/setup-android@v3
+
+      - name: Configurar NDK
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0" "ndk;28.2.13676358"
+
+      - name: Configurar XMake
+        run: |
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          export ANDROID_NDK_HOME="$ANDROID_SDK_ROOT/ndk/28.2.13676358"
+          xmake f \
+            -p android \
+            -a arm64-v8a \
+            --ndk="$ANDROID_NDK_HOME" \
+            --android_sdk="$ANDROID_HOME" \
+            -y
+
+      - name: Compilar
+        run: |
+          xmake -v
+
+      - name: Mostrar arquivos gerados
+        run: |
+          find build -type f | sort || true
+
+      - name: Enviar artefatos
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sodium-SDLL-android-arm64
+          path: |
+            build/**/*.so
+            build/**/*.levipack
+           

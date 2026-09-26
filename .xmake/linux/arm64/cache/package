@@ -1,0 +1,6 @@
+{
+    preloader = {
+        __requirestr = "preloader",
+        __enabled = false
+    }
+}

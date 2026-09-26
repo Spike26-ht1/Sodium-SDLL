@@ -1,0 +1,70 @@
+{
+  "format_version": 3,
+  "header": {
+    "name": "Sodium (SDLL) Settings",
+    "description": "Vanilla-style performance settings for Sodium (SDLL).",
+    "uuid": "dace2944-3f7b-458a-b7a7-2a6009da112d",
+    "version": "0.1.0",
+    "min_engine_version": "1.26.50",
+    "pack_scope": "world",
+    "base_game_version": "1.26.50"
+  },
+  "metadata": {
+    "authors": ["Sodium SDLL"]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "87040f14-42ec-420d-83ec-80412209aca6",
+      "version": "0.1.0"
+    }
+  ],
+  "settings": [
+    {
+      "type": "label",
+      "text": "Sodium (SDLL)"
+    },
+    {
+      "type": "toggle",
+      "text": "Chunk Culling",
+      "name": "sodium:chunk_culling",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Entity Culling",
+      "name": "sodium:entity_culling",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Particle Culling",
+      "name": "sodium:particle_culling",
+      "default": true
+    },
+    {
+      "type": "toggle",
+      "text": "Vegetation Optimization",
+      "name": "sodium:vegetation_optimization",
+      "default": true
+    },
+    {
+      "type": "slider",
+      "text": "Vegetation Distance",
+      "name": "sodium:vegetation_distance",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "slider",
+      "text": "Frame Multiplier",
+      "name": "sodium:frame_multiplier",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+    errdata = "gcc: \27[0;1;35mwarning: \27[0m\27[1margument unused during compilation: '-c' [-Wunused-command-line-argument]\27[0m\
+"
+}

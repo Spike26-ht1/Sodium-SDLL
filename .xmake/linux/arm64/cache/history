@@ -1,0 +1,15 @@
+{
+    cmdlines = {
+        "xmake f -y",
+        "xmake f -p android -a arm64-v8a -y",
+        "xmake f -p android -a arm64-v8a -y",
+        "xmake f -p android -a arm64-v8a -y",
+        "xmake require --uninstall preloader",
+        "xmake f -c",
+        "xmake f -p android -a arm64-v8a --ndk=/data/data/com.termux/files/home/ndk-tmp/android-ndk-r27 --android_sdk=/data/data/com.termux/files/home/android-sdk -y",
+        "xmake f -p android -a arm64-v8a --ndk=/data/data/com.termux/files/home/ndk-tmp/android-ndk-r27 -y",
+        "xmake f -p android -a arm64-v8a --ndk=/data/data/com.termux/files/home/ndk-tmp/android-ndk-r27 --android_sdk=/data/data/com.termux/files/home/android-sdk -y",
+        "xmake f -p android -a arm64-v8a --ndk=/data/data/com.termux/files/home/ndk-tmp/android-ndk-r27 --android_sdk=/data/data/com.termux/files/home/android-sdk -y",
+        "xmake f -p android -a arm64-v8a --ndk=/data/data/com.termux/files/home/ndk-tmp/android-ndk-r27 --android_sdk=/data/data/com.termux/files/home/android-sdk -y"
+    }
+}

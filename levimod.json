@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "sodium-sdll",
+  "version": "0.1.0",
+  "minecraft_versions": [
+    "1.26.50"
+  ],
+  "info": {
+    "name": "Sodium (SDLL)",
+    "author": "Sodium SDLL",
+    "description": "Performance optimization native mod for Minecraft Bedrock Android.",
+    "homepage_url": "",
+    "icon": "assets/icon.png",
+    "tags": [
+      "Performance",
+      "Rendering",
+      "Optimization"
+    ]
+  },
+  "release_assets": {
+    "include": [
+      "*.levipack",
+      "*.so"
+    ],
+    "labels": {
+      "Sodium-SDLL.levipack": "LeviPack",
+      "libSodiumSDLL.so": "Native library"
+    }
+  }
+}

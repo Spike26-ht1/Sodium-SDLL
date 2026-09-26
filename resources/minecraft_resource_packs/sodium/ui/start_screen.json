@@ -1,0 +1,28 @@
+{
+  "namespace": "start",
+  "sodium_active_row@start.stacked_row": {
+    "controls": [
+      {
+        "sodium_active_label": {
+          "type": "label",
+          "text": "Sodium (SDLL) • Active",
+          "text_alignment": "center",
+          "color": "$text_color",
+          "layer": 10
+        }
+      }
+    ]
+  },
+  "main_buttons_panel/stacked_rows": {
+    "modifications": [
+      {
+        "array_name": "controls",
+        "operation": "insert_after",
+        "control_name": "play",
+        "value": {
+          "sodium_active_row@start.sodium_active_row": {}
+        }
+      }
+    ]
+  }
+}
