@@ -5,10 +5,9 @@ set_policy("package.requires_lock", true)
 -- Keeping it out of xmake packages avoids host-platform resolution.
 local preloader_root = os.getenv("PRELOADER_ROOT")
 
-if is_plat("android") then
-    assert(preloader_root, "PRELOADER_ROOT is required for Android builds")
+if is_plat("android") and not preloader_root then
+    raise("PRELOADER_ROOT is required for Android builds")
 end
-
 target("SodiumSDLL")
     set_kind("shared")
     set_languages("c++20")
