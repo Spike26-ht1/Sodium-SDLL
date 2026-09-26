@@ -1,0 +1,54 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+set -e
+
+echo "================================"
+echo " Sodium-SDLL FAST BUILDER"
+echo "================================"
+
+echo "[1/5] Verificando Git..."
+git status --short
+
+if [ -n "$(git status --porcelain)" ]; then
+    git add .
+    git commit -m "Fast build: $(date '+%Y-%m-%d %H:%M:%S')"
+    git push origin main
+else
+    echo "Nenhuma alteração local."
+fi
+
+echo "[2/5] Procurando workflow..."
+
+RUN_ID=$(gh run list \
+    --workflow=build.yml \
+    --branch=main \
+    --limit=1 \
+    --json databaseId \
+    --jq '.[0].databaseId')
+
+echo "Run atual: $RUN_ID"
+
+echo "[3/5] Aguardando GitHub Actions..."
+
+gh run watch "$RUN_ID" --exit-status
+
+echo "[4/5] Build concluído!"
+
+OUT="$HOME/storage/downloads/Sodium-SDLL-build"
+mkdir -p "$OUT"
+
+echo "[5/5] Baixando artefato..."
+
+gh run download "$RUN_ID" \
+    -n Sodium-SDLL-android-arm64 \
+    -D "$OUT"
+
+echo
+echo "================================"
+echo " BUILD OK!"
+echo "================================"
+echo
+find "$OUT" -type f -maxdepth 5 -print
+echo
+echo "Arquivos em:"
+echo "$OUT"
