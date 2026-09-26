@@ -1,6 +1,6 @@
 # Sodium (SDLL) — SoDium LossLess
 
-Target: Minecraft Bedrock 1.26.50 Android / LeviLauncher.
+Target: Minecraft Bedrock 1.26.50 Android / LeviLauncher..
 
 ## v0.2.0
 
