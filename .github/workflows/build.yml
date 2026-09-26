@@ -103,8 +103,6 @@ jobs:
 
           test -f \
             "$GITHUB_WORKSPACE/preloader/install/lib/libpreloader.so"
-          test -f \
-            "$GITHUB_WORKSPACE/preloader/install/lib/libpreloader.so"
 
           test -f \
             "$GITHUB_WORKSPACE/preloader/install/include/pl/Mod.hpp"
