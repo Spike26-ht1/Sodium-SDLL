@@ -91,6 +91,18 @@ jobs:
           cmake --install \
             preloader/build
 
+          mkdir -p \
+            "$GITHUB_WORKSPACE/preloader/install/include"
+
+          cp -R \
+            "$GITHUB_WORKSPACE/preloader/build/_deps/fmt-src/include/fmt" \
+            "$GITHUB_WORKSPACE/preloader/install/include/"
+
+          test -f \
+            "$GITHUB_WORKSPACE/preloader/install/include/fmt/format.h"
+
+          test -f \
+            "$GITHUB_WORKSPACE/preloader/install/lib/libpreloader.so"
           test -f \
             "$GITHUB_WORKSPACE/preloader/install/lib/libpreloader.so"
 
