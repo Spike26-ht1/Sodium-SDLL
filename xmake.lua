@@ -72,10 +72,9 @@ target("SodiumSDLL")
 
         local python = find_tool("python3") or find_tool("python")
 
-        assert(
-            python,
-            "Python 3 is required to package Sodium (SDLL).levipack"
-        )
+if not python then
+    raise("Python 3 is required to package Sodium (SDLL).levipack")
+        end
 
         local args = {
             path.join(
