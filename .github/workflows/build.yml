@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Baixar código
-        uses: actions/checkout@v4
 
       - name: Instalar dependências
         run: |
