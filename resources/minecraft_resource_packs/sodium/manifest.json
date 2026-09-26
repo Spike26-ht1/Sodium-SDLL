@@ -4,9 +4,9 @@
     "name": "Sodium (SDLL)",
     "description": "SoDium LossLess vanilla-style performance controls.",
     "uuid": "4ed0e84f-e6ab-4e70-a7a8-3fbb5d998a1e",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "min_engine_version": "1.26.50",
-    "pack_scope": "world",
+    "pack_scope": "global",
     "base_game_version": "1.26.50"
   },
   "metadata": {
@@ -16,7 +16,7 @@
     {
       "type": "resources",
       "uuid": "bd0de3a4-c4d0-48ce-86b2-8f9b4e55799c",
-      "version": "0.2.0"
+      "version": "0.2.1"
     }
   ],
   "settings": [
