@@ -28,3 +28,9 @@ xmake -y
 ```
 
 The build packages the native library and bundled resource pack into `Sodium-SDLL.levipack`.
+
+
+## Fast test build (0.3.0)
+This revision focuses on making the native mod load reliably when Android loads `libEGL.so`. The runtime watches `dlopen()` and installs the EGL frame hook after EGL becomes available. The resource-pack/UI experiment was removed from the package because it is not required for native loading.
+
+Target test: Minecraft Bedrock 1.26.51 ARM64.

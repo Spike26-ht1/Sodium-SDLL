@@ -101,13 +101,6 @@ if not python then
                 "Version.hpp"
             ),
 
-            "--resource-pack",
-            path.join(
-                os.projectdir(),
-                "resources",
-                "minecraft_resource_packs",
-                "sodium"
-            ),
 
             "--output",
             path.join(

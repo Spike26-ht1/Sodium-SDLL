@@ -4,6 +4,11 @@
 
 class SodiumSDLLMod {
 public:
+    static SodiumSDLLMod& instance() {
+        static SodiumSDLLMod mod;
+        return mod;
+    }
+
     bool load(pl::mod::ModContext& context) {
         return sodium::core::Runtime::instance().load(context);
     }
@@ -21,4 +26,4 @@ public:
     }
 };
 
-PL_REGISTER_MOD(SodiumSDLLMod, SodiumSDLLMod{})
+PL_REGISTER_MOD(SodiumSDLLMod, SodiumSDLLMod::instance())

@@ -42,12 +42,10 @@ def add_tree(archive: zipfile.ZipFile, root: Path, prefix: str) -> None:
             archive.write(path, f"{prefix}/{path.relative_to(root).as_posix()}")
 
 
-def write_package(library: Path, icon: Path, version_header: Path, resource_pack: Path, output: Path) -> None:
+def write_package(library: Path, icon: Path, version_header: Path, output: Path) -> None:
     for path in (library, icon, version_header):
         if not path.is_file():
             raise FileNotFoundError(path)
-    if not resource_pack.is_dir():
-        raise FileNotFoundError(resource_pack)
 
     manifest = build_manifest(parse_version(version_header))
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -56,7 +54,6 @@ def write_package(library: Path, icon: Path, version_header: Path, resource_pack
         archive.writestr("manifest.json", json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
         archive.write(library, "libSodiumSDLL.so")
         archive.write(icon, "icon.png")
-        add_tree(archive, resource_pack, "resources/minecraft_resource_packs/sodium")
 
 
 def main() -> int:
@@ -64,14 +61,12 @@ def main() -> int:
     parser.add_argument("--library", required=True, type=Path)
     parser.add_argument("--icon", required=True, type=Path)
     parser.add_argument("--version-header", required=True, type=Path)
-    parser.add_argument("--resource-pack", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     write_package(
         args.library.resolve(),
         args.icon.resolve(),
         args.version_header.resolve(),
-        args.resource_pack.resolve(),
         args.output.resolve(),
     )
     print(args.output.resolve())

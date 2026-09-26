@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "id": "sodium-sdll",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "minecraft_versions": [
-    "1.26.50"
+    "1.26.51"
   ],
   "info": {
     "name": "Sodium (SDLL)",
