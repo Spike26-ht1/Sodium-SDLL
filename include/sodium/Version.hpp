@@ -8,7 +8,7 @@ namespace sodium {
 inline constexpr std::string_view Name = "Sodium (SDLL)";
 inline constexpr std::string_view Author = "Sodium SDLL";
 inline constexpr std::string_view Description = "SoDium LossLess for Minecraft Bedrock 1.26.51 Android.";
-inline constexpr std::string_view Version = "0.3.0";
+inline constexpr std::string_view Version = "0.3.1";
 inline constexpr std::uint32_t SdkVersion = 1;
 
 }

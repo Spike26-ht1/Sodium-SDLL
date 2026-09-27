@@ -1,8 +1,9 @@
 #pragma once
 
+#include <atomic>
 #include <filesystem>
-
-#include "HookState.hpp"
+#include <mutex>
+#include <thread>
 
 namespace pl::mod { class ModContext; }
 
@@ -20,21 +21,20 @@ public:
 private:
     bool loadFrameSettings(const std::filesystem::path& configDir);
     bool tryInstallFrameHook();
-    bool installDlopenHook();
-    void removeDlopenHook();
 
-    static void* dlopenDetour(const char* filename, int flags);
-    void* onDlopen(const char* filename, int flags);
+    void startEglWatcher();
+    void stopEglWatcher();
+    void eglWatcherLoop();
 
     bool mLoaded = false;
     bool mEnabled = false;
-    bool mDlopenHookInstalled = false;
     int mFrameMultiplier = 2;
+
     std::filesystem::path mConfigDir;
 
-    using DlopenFn = void*(*)(const char*, int);
-    DlopenFn mOriginalDlopen = nullptr;
-    HookState mDlopenHook{};
+    std::atomic_bool mWatcherStop{false};
+    std::thread mEglWatcher;
+    std::mutex mHookMutex;
 };
 
 }

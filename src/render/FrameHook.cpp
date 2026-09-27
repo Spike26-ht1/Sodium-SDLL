@@ -306,110 +306,28 @@ EGLBoolean FrameHook::swapBuffersDetour(EGLDisplay display, EGLSurface surface) 
     return instance().onSwapBuffers(display, surface);
 }
 
-EGLBoolean FrameHook::onSwapBuffers(EGLDisplay display, EGLSurface surface) {
-    ++mFrameCount;
+EGLBoolean FrameHook::onSwapBuffers(
+    EGLDisplay display,
+    EGLSurface surface
+) {
+    const auto count = ++mFrameCount;
 
-    if (!mOriginal) return EGL_FALSE;
-
-    const int multiplier = mMultiplier.load(std::memory_order_relaxed);
-    if (multiplier <= 1 || eglGetCurrentContext() == EGL_NO_CONTEXT) {
-        return mOriginal(display, surface);
+    if (count <= 5) {
+        __android_log_print(
+            ANDROID_LOG_INFO,
+            kLogTag,
+            "eglSwapBuffers intercepted successfully (frame=%llu)",
+            static_cast<unsigned long long>(count)
+        );
     }
 
-    EGLint width = 0;
-    EGLint height = 0;
-    if (eglQuerySurface(display, surface, EGL_WIDTH, &width) != EGL_TRUE ||
-        eglQuerySurface(display, surface, EGL_HEIGHT, &height) != EGL_TRUE ||
-        width <= 0 || height <= 0) {
-        return mOriginal(display, surface);
-    }
+    // SAFE TEST MODE:
+    // The hook is intentionally a pure pass-through.
+    // No OpenGL state, texture, shader or timing manipulation.
+    if (!mOriginal)
+        return EGL_FALSE;
 
-    if (!initResources() || !resizeResources(width, height)) {
-        return mOriginal(display, surface);
-    }
-
-    GLint previousProgram = 0;
-    GLint previousFramebuffer = 0;
-    GLint previousArrayBuffer = 0;
-    GLint previousElementArrayBuffer = 0;
-    GLint previousActiveTexture = GL_TEXTURE0;
-    GLint previousTexture0 = 0;
-    GLint previousTexture1 = 0;
-    GLint previousViewport[4]{};
-
-    const GLboolean previousScissor = glIsEnabled(GL_SCISSOR_TEST);
-    const GLboolean previousDepth = glIsEnabled(GL_DEPTH_TEST);
-    const GLboolean previousBlend = glIsEnabled(GL_BLEND);
-    const GLboolean previousCull = glIsEnabled(GL_CULL_FACE);
-    const GLboolean previousStencil = glIsEnabled(GL_STENCIL_TEST);
-
-    glGetIntegerv(GL_CURRENT_PROGRAM, &previousProgram);
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFramebuffer);
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &previousArrayBuffer);
-    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &previousElementArrayBuffer);
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &previousActiveTexture);
-    glActiveTexture(GL_TEXTURE0);
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture0);
-    glActiveTexture(GL_TEXTURE1);
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture1);
-    glActiveTexture(static_cast<GLenum>(previousActiveTexture));
-    glGetIntegerv(GL_VIEWPORT, previousViewport);
-
-    // eglSwapBuffers is the presentation boundary. The frame should be in the default framebuffer here.
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    if (!captureCurrentFrame(width, height)) {
-        restoreGlState(previousProgram, previousFramebuffer, previousArrayBuffer, previousElementArrayBuffer,
-                       previousActiveTexture, previousTexture0, previousTexture1, previousViewport,
-                       previousScissor, previousDepth, previousBlend, previousCull, previousStencil);
-        return mOriginal(display, surface);
-    }
-
-    glDisable(GL_SCISSOR_TEST);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_STENCIL_TEST);
-    glViewport(0, 0, width, height);
-
-    // The first captured frame has no predecessor, so it is presented unchanged.
-    if (!mHasPrevious) {
-        const EGLBoolean result = mOriginal(display, surface);
-        std::swap(mPreviousTexture, mCurrentTexture);
-        mHasPrevious = (result == EGL_TRUE);
-        restoreGlState(previousProgram, previousFramebuffer, previousArrayBuffer, previousElementArrayBuffer,
-                       previousActiveTexture, previousTexture0, previousTexture1, previousViewport,
-                       previousScissor, previousDepth, previousBlend, previousCull, previousStencil);
-        return result;
-    }
-
-    EGLBoolean result = EGL_TRUE;
-    for (int i = 1; i < multiplier; ++i) {
-        const float blend = static_cast<float>(i) / static_cast<float>(multiplier);
-        if (!drawFrameTexture(blend)) {
-            result = EGL_FALSE;
-            break;
-        }
-        result = mOriginal(display, surface);
-        if (result != EGL_TRUE) break;
-    }
-
-    // Present the real rendered frame last.
-    if (result == EGL_TRUE) {
-        if (!drawFrameTexture(1.0f)) {
-            result = EGL_FALSE;
-        } else {
-            result = mOriginal(display, surface);
-        }
-    }
-
-    std::swap(mPreviousTexture, mCurrentTexture);
-    mHasPrevious = (result == EGL_TRUE);
-
-    restoreGlState(previousProgram, previousFramebuffer, previousArrayBuffer, previousElementArrayBuffer,
-                   previousActiveTexture, previousTexture0, previousTexture1, previousViewport,
-                   previousScissor, previousDepth, previousBlend, previousCull, previousStencil);
-    return result;
+    return mOriginal(display, surface);
 }
 
 }

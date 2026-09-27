@@ -20,6 +20,7 @@ public:
     void setMultiplier(int multiplier);
     int multiplier() const { return mMultiplier.load(std::memory_order_relaxed); }
     std::uint64_t frameCount() const { return mFrameCount.load(std::memory_order_relaxed); }
+    bool isInstalled() const { return mInstalled.load(std::memory_order_acquire); }
 
 private:
     FrameHook() = default;
